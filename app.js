@@ -1,3 +1,9 @@
+// Show loading
+const mapDiv = document.getElementById('map');
+const tableDiv = document.getElementById('table');
+mapDiv.innerHTML = '<div class="flex justify-center items-center h-full"><div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div><p class="mt-2 text-gray-600">Loading map...</p></div>';
+tableDiv.innerHTML = '<div class="flex justify-center items-center h-full"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div><p class="mt-2 text-gray-600">Loading data...</p></div>';
+
 const map = L.map('map', {
     center: [0, 0],
     zoom: 2,
@@ -8,7 +14,11 @@ const map = L.map('map', {
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+}).addTo(map).on('load', () => {
+    // Hide loading after tiles load
+    const loading = mapDiv.querySelector('.flex');
+    if (loading) loading.style.display = 'none';
+});
 
 let outageData = {};
 
@@ -62,6 +72,10 @@ fetch(`${import.meta.env.VITE_API_URL}/aggregate-data`, {
             tableDiv.innerHTML = html;
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        console.error('Error:', error);
+        mapDiv.innerHTML = '<div class="flex justify-center items-center h-full"><p class="text-red-600 text-center">Failed to load map. Please check your connection and try again.</p></div>';
+        tableDiv.innerHTML = '<div class="flex justify-center items-center h-full"><p class="text-red-600 text-center">Failed to load data. Please check your connection and try again.</p></div>';
+    });
 
 map.invalidateSize();
