@@ -63,10 +63,10 @@ fetch(`${import.meta.env.VITE_API_URL}/aggregate-data`, {
         const tableDiv = document.getElementById('table');
         const outages = Object.entries(outageData).filter(([code, data]) => data.status === 'OUTAGE');
         if (outages.length > 0) {
-            let html = '<h2 class="text-xl font-bold mb-2">Outage Countries</h2><table class="table-auto w-full border-collapse border border-gray-300"><thead><tr class="bg-gray-200"><th class="border border-gray-300 px-4 py-2">Country</th><th class="border border-gray-300 px-4 py-2">Status</th><th class="border border-gray-300 px-4 py-2">Cause</th><th class="border border-gray-300 px-4 py-2">Since</th></tr></thead><tbody>';
+            let html = '<h2 class="text-lg sm:text-xl font-bold mb-2">Outage Countries</h2><table class="table-auto w-full border-collapse border border-gray-300 text-xs sm:text-sm"><thead><tr class="bg-gray-200"><th class="border border-gray-300 px-2 py-1 sm:px-4 sm:py-2">Country</th><th class="border border-gray-300 px-2 py-1 sm:px-4 sm:py-2">Status</th><th class="border border-gray-300 px-2 py-1 sm:px-4 sm:py-2">Cause</th><th class="border border-gray-300 px-2 py-1 sm:px-4 sm:py-2">Since</th></tr></thead><tbody>';
             outages.forEach(([code, data]) => {
                 const countryName = geoData.features.find(f => f.properties["ISO3166-1-Alpha-2"] === code)?.properties.name || code;
-                html += `<tr><td class="border border-gray-300 px-4 py-2">${countryName}</td><td class="border border-gray-300 px-4 py-2">${data.status}</td><td class="border border-gray-300 px-4 py-2">${data.cause}</td><td class="border border-gray-300 px-4 py-2">${new Date(data.since).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</td></tr>`;
+                html += `<tr><td class="border border-gray-300 px-2 py-1 sm:px-4 sm:py-2">${countryName}</td><td class="border border-gray-300 px-2 py-1 sm:px-4 sm:py-2">${data.status}</td><td class="border border-gray-300 px-2 py-1 sm:px-4 sm:py-2">${data.cause}</td><td class="border border-gray-300 px-2 py-1 sm:px-4 sm:py-2">${new Date(data.since).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</td></tr>`;
             });
             html += '</tbody></table>';
             tableDiv.innerHTML = html;
@@ -79,3 +79,8 @@ fetch(`${import.meta.env.VITE_API_URL}/aggregate-data`, {
     });
 
 map.invalidateSize();
+
+// Responsive: invalidate on resize
+window.addEventListener('resize', () => {
+    map.invalidateSize();
+});
